@@ -1,14 +1,35 @@
+import pandas
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
+from app.utils.df_utils import get_init_dataset
+
+
 def train_spam_filter():
     # Read and concatenate email_data_0.csv and email_data_1.csv
+    data0 = get_init_dataset("../../data/email_data_0.csv")
+    data1 = get_init_dataset("../../data/email_data_1.csv")
+    full = data0.append(data1)
 
     # Use TfidfVectorizer for fit and transform 'email_body'
+    tfidf_vect = TfidfVectorizer()
+    vectorized = tfidf_vect.fit_transform(full['email_body'])
+
+    # print(tfidf_vect.get_feature_names())  # prints what is inside of the vocabulary
+    # print(tfidf_vect.transform(['alex']).toarray())  # prints array of "hits" into the vocab
 
     # covert the sparse matrix row to a dense array
+    dense = vectorized.toarray()
 
     # split dataset for 70% train and 30% test
+    # Train, Test = train_test_split(dense, test_size=0.3) # didn't go on this way - decided to test on new emails only
+    # print(dense.shape, Train.shape, Test.shape)
 
     # USe 'MultinomialNB' for 'fit' and 'predict'
-    labels = ['ham', 'spam']
+    naive_byes_clf = MultinomialNB()
+
+    y = pandas.factorize(full["email_type"])[0]  # the list of ham/spam column converted to 0/1
+    naive_byes_clf.fit(dense, y)
 
     # Use 'precision_recall_fscore_support' for get and print (precision, recall, fscore, support)
 
