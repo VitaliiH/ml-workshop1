@@ -17,22 +17,22 @@ def train_spam_filter():
     return tfidf_vect, naive_byes_clf
 
 
-def predect_new(tfidf_vect, clf, new_emails):
+def predict_new(tfidf_vect, clf, new_emails):
     labels = ['ham', 'spam']
     # Use tfidf_vect for the text transformation
     new_text_tfidf = tfidf_vect.transform(new_emails)
-    print(new_text_tfidf)
-    print(new_text_tfidf.shape)
+
+    print("New (income) emails amount: %s train data amount: %s" % new_text_tfidf.shape)
     # Predict probability with pre-trained MultinomialNB
     predicted_p = clf.predict_proba(new_text_tfidf)
     predicted = clf.predict(new_text_tfidf)
 
     # Print probability results
     for idx, doc in enumerate(new_emails):
-        print('\n', doc)
+        print("Email body: %s" % doc)
         for j, label in enumerate(labels):
-            print('% s: %.3f' % (labels[j], predicted_p[idx][j]))
-        print('%r => %s' % (doc, predicted[idx]))
+            print('%s: %.3f' % (labels[j], predicted_p[idx][j]))
+        print('The email is => %s\n' % (labels[predicted[idx]]))
 
 
 if __name__ == '__main__':
@@ -45,9 +45,13 @@ if __name__ == '__main__':
         input : list of email text
     """
     new_emails = [
+        'awordthatdoesnotexist письмо',
+        "Text82228>> Get more ringtones, logos and games from www.txt82228.com. Questions: info@txt82228.co.uk",  # spam
+        "Just looked it up and addie goes back Monday, sucks to be her",  # ham
         "You have won a guaranteed price`",
-        "Dear student you are almost done ML workshop"]
+        "Dear student you are almost done ML workshop"
+    ]
     """
         output: 
     """
-    predect_new(tfidf_vect, naive_byes_clf, new_emails)
+    predict_new(tfidf_vect, naive_byes_clf, new_emails)
